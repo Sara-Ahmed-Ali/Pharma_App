@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Validators {
+  static final RegExp passwordPolicy = RegExp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$',
+  );
+
   static String? email(String? value) {
     final text = value?.trim() ?? '';
     if (text.isEmpty) return 'Email is required';
@@ -13,6 +17,10 @@ class Validators {
     final text = value ?? '';
     if (text.isEmpty) return 'Password is required';
     if (text.length < 6) return 'Password must be at least 6 characters';
+    if (!passwordPolicy.hasMatch(text)) {
+      return 'Password must contain at least one uppercase, lowercase, '
+          'number, and special character';
+    }
     return null;
   }
 

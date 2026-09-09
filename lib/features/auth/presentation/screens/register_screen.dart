@@ -49,9 +49,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(backgroundColor: Colors.white),
+      backgroundColor: colors.background,
+      appBar: AppBar(backgroundColor: colors.surface),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is RegistrationSucceeded) {
@@ -83,20 +84,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Create Account',
                       style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Join Pharma and start shopping for your health',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -176,13 +177,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
+                        Text(
                           'Already have an account?',
-                          style: TextStyle(color: AppColors.textSecondary),
+                          style: TextStyle(color: colors.textSecondary),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text(
+                          child: Text(
                             'Sign In',
                             style: TextStyle(
                               color: AppColors.primary,

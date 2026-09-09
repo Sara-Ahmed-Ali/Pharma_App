@@ -1,5 +1,6 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -26,14 +27,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   bool get _inStock => widget.product.inStock;
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     final product = widget.product;
     final isFavorite =
         context.watch<FavoritesBloc>().isFavorite(product.id);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -56,27 +58,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: CachedNetworkImage(
-                imageUrl: ProductImages.forProduct(
+imageUrl: ProductImages.forProduct(
                   productId: product.id,
                   categoryName: product.categoryName,
+                  imageUrl: product.imageUrl,
                 ),
-                fit: BoxFit.cover,
+fit: BoxFit.cover,
                 placeholder: (_, _) => Container(
-                  color: const Color(0xFFF1F5F9),
-                  child: const Center(
+                  color: colors.placeholderBackground,
+                  child: Center(
                     child: Icon(
                       Icons.medication_outlined,
-                      color: Color(0xFFCBD5E1),
+                      color: colors.placeholderIcon,
                       size: 64,
                     ),
                   ),
                 ),
                 errorWidget: (_, _, _) => Container(
-                  color: const Color(0xFFF1F5F9),
-                  child: const Center(
+                  color: colors.placeholderBackground,
+                  child: Center(
                     child: Icon(
                       Icons.broken_image_outlined,
-                      color: Color(0xFFCBD5E1),
+                      color: colors.placeholderIcon,
                       size: 64,
                     ),
                   ),
@@ -85,11 +88,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
           ),
           SliverToBoxAdapter(
-            child: Container(
+child: Container(
               padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,17 +105,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Expanded(
                         child: Text(
                           product.name,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
                       const SizedBox(width: 12),
                       Text(
                         Formatters.currency(product.price),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primary,
@@ -127,13 +132,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           vertical: 5,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: colors.primaryLight,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text(
+child: Text(
                           product.categoryName,
-                          style: const TextStyle(
-                            color: AppColors.primaryDark,
+                          style: TextStyle(
+                            color: colors.onPrimaryLight,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -144,31 +149,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Description',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     product.description,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       height: 1.6,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                   if (_inStock) ...[
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'Quantity',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -182,9 +187,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     const SizedBox(height: 10),
                     Text(
                       '${product.stockQuantity} items in stock',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textHint,
+                        color: colors.textHint,
                       ),
                     ),
                   ],
@@ -198,12 +203,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     );
   }
 
-  Widget _buildBottomBar() {
+Widget _buildBottomBar() {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.border)),
       ),
       child: SafeArea(
         top: false,
@@ -224,7 +230,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         );
     setState(() => _addedToCart = true);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text('Added to your cart'),
         backgroundColor: AppColors.success,
       ),
@@ -253,7 +259,7 @@ class _StockBadge extends StatelessWidget {
   }
 }
 
-class _QuantitySelector extends StatelessWidget {
+class _QuantitySelector extends StatefulWidget {
   final int quantity;
   final int max;
   final ValueChanged<int> onChanged;
@@ -265,26 +271,102 @@ class _QuantitySelector extends StatelessWidget {
   });
 
   @override
+  State<_QuantitySelector> createState() => _QuantitySelectorState();
+}
+
+class _QuantitySelectorState extends State<_QuantitySelector> {
+  late final TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: '${widget.quantity}');
+  }
+
+  @override
+  void didUpdateWidget(covariant _QuantitySelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.quantity != widget.quantity) {
+      final normalized = '${widget.quantity}';
+      if (!_focusNode.hasFocus && _controller.text != normalized) {
+        _controller.text = normalized;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final parsed = int.tryParse(_controller.text.trim());
+    if (parsed == null || parsed < 1) {
+      _controller.text = '${widget.quantity}';
+      return;
+    }
+    final clamped = parsed > widget.max ? widget.max : parsed;
+    if (clamped != widget.quantity) {
+      widget.onChanged(clamped);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Row(
       children: [
         _QtyButton(
           icon: Icons.remove_rounded,
-          onTap: quantity > 1 ? () => onChanged(quantity - 1) : null,
+          onTap: widget.quantity > 1
+              ? () => widget.onChanged(widget.quantity - 1)
+              : null,
         ),
-        const SizedBox(width: 16),
-        Text(
-          '$quantity',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+        const SizedBox(width: 12),
+        SizedBox(
+          width: 52,
+          child: TextField(
+            controller: _controller,
+            focusNode: _focusNode,
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            maxLength: 3,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary,
+            ),
+            decoration: InputDecoration(
+              isDense: true,
+              counterText: '',
+              contentPadding: const EdgeInsets.symmetric(vertical: 6),
+              border: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide(color: colors.border),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide(color: colors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide(color: AppColors.primary),
+              ),
+            ),
+            onSubmitted: (_) => _submit(),
+            onEditingComplete: _submit,
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         _QtyButton(
           icon: Icons.add_rounded,
-          onTap: quantity < max ? () => onChanged(quantity + 1) : null,
+          onTap: widget.quantity < widget.max
+              ? () => widget.onChanged(widget.quantity + 1)
+              : null,
         ),
       ],
     );
@@ -297,8 +379,9 @@ class _QtyButton extends StatelessWidget {
 
   const _QtyButton({required this.icon, this.onTap});
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
@@ -307,15 +390,15 @@ class _QtyButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           color: onTap == null
-              ? const Color(0xFFF1F5F9)
-              : AppColors.primaryLight,
+              ? colors.placeholderBackground
+              : colors.primaryLight,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           icon,
           size: 20,
           color: onTap == null
-              ? const Color(0xFFCBD5E1)
+              ? colors.placeholderIcon
               : AppColors.primary,
         ),
       ),

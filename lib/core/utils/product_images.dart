@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Backend does not expose product images, so we provide deterministic,
-/// category-aware placeholder images for a polished UI.
+/// Provides product images: prefers the real image URL coming from the
+/// backend (ImageUrl column), and falls back to deterministic,
+/// category-aware placeholder images otherwise.
 class ProductImages {
   static const String _base = 'https://images.unsplash.com/photo-';
 
@@ -27,7 +28,10 @@ class ProductImages {
   static String forProduct({
     required int productId,
     required String categoryName,
+    String? imageUrl,
   }) {
+    if (imageUrl != null && imageUrl.isNotEmpty) return imageUrl;
+
     final normalized = categoryName.toLowerCase();
 
     if (normalized.contains('vitamin') ||
@@ -46,7 +50,14 @@ class ProductImages {
   static ImageProvider provider({
     required int productId,
     required String categoryName,
+    String? imageUrl,
   }) {
-    return NetworkImage(forProduct(productId: productId, categoryName: categoryName));
+    return NetworkImage(
+      forProduct(
+        productId: productId,
+        categoryName: categoryName,
+        imageUrl: imageUrl,
+      ),
+    );
   }
 }

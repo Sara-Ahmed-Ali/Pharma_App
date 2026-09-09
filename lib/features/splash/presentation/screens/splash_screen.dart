@@ -62,8 +62,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.background,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated || state is AuthUnauthenticated) {
@@ -99,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Pharma App',
                 style: TextStyle(
                   fontSize: 28,
@@ -108,15 +109,15 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'Your trusted pharmacy, in your pocket',
                 style: TextStyle(
                   fontSize: 14,
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 40),
-              const SizedBox(
+              SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(

@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/widgets/common/state_views.dart';
 import '../../../../core/widgets/shimmers/shimmer_views.dart';
 import '../../../products/domain/entities/product.dart';
 import '../../../products/presentation/bloc/catalog_bloc.dart';
 import '../../../products/presentation/bloc/catalog_event.dart';
 import '../../../products/presentation/bloc/catalog_state.dart';
+import '../../../products/presentation/bloc/favorites_bloc.dart';
+import '../../../products/presentation/screens/favorites_screen.dart';
 import '../../../products/presentation/screens/product_details_screen.dart';
 import '../../../products/presentation/widgets/category_chip.dart';
 import '../../../products/presentation/widgets/product_card.dart';
@@ -73,12 +76,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: Row(
           children: [
-            const Icon(Icons.local_pharmacy_rounded,
+            Icon(Icons.local_pharmacy_rounded,
                 color: AppColors.primary, size: 26),
             const SizedBox(width: 8),
             Text(
@@ -86,11 +90,15 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey.shade900,
+                color: colors.textPrimary,
               ),
             ),
           ],
         ),
+        actions: const [
+          _DarkModeButton(),
+          _FavoritesButton(),
+        ],
       ),
       body: RefreshIndicator(
         color: AppColors.primary,
@@ -125,113 +133,125 @@ class _HomeScreenState extends State<HomeScreen> {
 
             if (state is CatalogLoaded) {
               final products = state.products;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _BannerSlider(
-                    images: _sliderImages,
-                    controller: _pageController,
-                    currentPage: _currentPage,
-                    onPageChanged: (index) =>
-                        setState(() => _currentPage = index),
-                  ),
-                  const SizedBox(height: 12),
-                  _dotIndicator(
-                    _sliderImages.length,
-                    _currentPage,
-                  ),
-                  const SizedBox(height: 16),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _SearchBar(
-                      controller: _searchController,
-                      onChanged: _onSearchChanged,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 40,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+              return CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AllChip(
-                          isSelected: _selectedCategoryId == null,
-                          onTap: () => _onCategorySelected(null),
+                        _BannerSlider(
+                          images: _sliderImages,
+                          controller: _pageController,
+                          currentPage: _currentPage,
+                          onPageChanged: (index) =>
+                              setState(() => _currentPage = index),
                         ),
-                        const SizedBox(width: 8),
-                        ...state.categories.map(
-                          (category) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: CategoryChip(
-                              category: category,
-                              isSelected:
-                                  _selectedCategoryId == category.id,
-                              onTap: () =>
-                                  _onCategorySelected(category.id),
-                            ),
+                        const SizedBox(height: 12),
+                        _dotIndicator(
+                          _sliderImages.length,
+                          _currentPage,
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: _SearchBar(
+                            controller: _searchController,
+                            onChanged: _onSearchChanged,
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: 40,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            children: [
+                              AllChip(
+                                isSelected: _selectedCategoryId == null,
+                                onTap: () => _onCategorySelected(null),
+                              ),
+                              const SizedBox(width: 8),
+                              ...state.categories.map(
+                                (category) => Padding(
+                                  padding: const EdgeInsets.only(right: 8),
+                                  child: CategoryChip(
+                                    category: category,
+                                    isSelected:
+                                        _selectedCategoryId == category.id,
+                                    onTap: () =>
+                                        _onCategorySelected(category.id),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                products.isEmpty
+                                    ? 'No products found'
+                                    : '${products.length} products',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: colors.textPrimary,
+                                ),
+                              ),
+                              if (state.isSearching)
+                                SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          products.isEmpty
-                              ? 'No products found'
-                              : '${products.length} products',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
+                  if (products.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: EmptyView(
+                        title: 'No products available',
+                        subtitle: 'Try a different search or category.',
+                        icon: Icons.search_off_rounded,
+                        action: _buildClearFilters(),
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.all(16),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.72,
                         ),
-                        if (state.isSearching)
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                      ],
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final product = products[index];
+                            return ProductCard(
+                              product: product,
+                              onTap: () => _openProductDetails(product),
+                            );
+                          },
+                          childCount: products.length,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: products.isEmpty
-                        ? EmptyView(
-                            title: 'No products available',
-                            subtitle: 'Try a different search or category.',
-                            icon: Icons.search_off_rounded,
-                            action: _buildClearFilters(),
-                          )
-                        : GridView.builder(
-                            padding: const EdgeInsets.all(16),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: 0.72,
-                            ),
-                            itemCount: products.length,
-                            itemBuilder: (context, index) {
-                              final product = products[index];
-                              return ProductCard(
-                                product: product,
-                                onTap: () =>
-                                    _openProductDetails(product),
-                              );
-                            },
-                          ),
-                  ),
                 ],
               );
             }
@@ -255,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _dotIndicator(int count, int current) {
+    final colors = AppColors.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
@@ -265,9 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
           width: current == index ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: current == index
-                ? AppColors.primary
-                : Colors.grey.shade400,
+            color: current == index ? AppColors.primary : colors.textHint,
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -389,15 +408,74 @@ class _BannerShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         height: 170,
         decoration: BoxDecoration(
-          color: const Color(0xFFE8EDF2),
+          color: colors.border,
           borderRadius: BorderRadius.circular(16),
         ),
       ),
+    );
+  }
+}
+
+class _FavoritesButton extends StatelessWidget {
+  const _FavoritesButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final count =
+        context.select<FavoritesBloc, int>((bloc) => bloc.favoritesCount);
+
+    return Center(
+      child: IconButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+          );
+        },
+        tooltip: 'My Favorites',
+        icon: Badge.count(
+          count: count,
+          isLabelVisible: count > 0,
+          backgroundColor: AppColors.error,
+          child: Icon(
+            Icons.favorite_rounded,
+            color: AppColors.primary,
+            size: 24,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DarkModeButton extends StatelessWidget {
+  const _DarkModeButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeController.instance,
+      builder: (context, _, _) {
+        final isDark = ThemeController.instance.isDark;
+        return Center(
+          child: IconButton(
+            onPressed: () => ThemeController.instance.toggle(),
+            tooltip: isDark ? 'Switch to Light Mode' : 'Dark Mode',
+            icon: Icon(
+              isDark
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+              color: AppColors.primary,
+              size: 24,
+            ),
+          ),
+        );
+      },
     );
   }
 }

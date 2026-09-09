@@ -70,6 +70,41 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<AuthUser> updateProfile({
+    required String name,
+    required String email,
+    required String currentPassword,
+    String? newPassword,
+  }) async {
+    try {
+      final body = <String, dynamic>{
+        'name': name.trim(),
+        'email': email.trim(),
+      };
+      if (currentPassword.isNotEmpty) {
+        body['currentPassword'] = currentPassword;
+      }
+      if (newPassword != null && newPassword.isNotEmpty) {
+        body['newPassword'] = newPassword;
+      }
+      final response = await _dio.put<Map<String, dynamic>>(
+        ApiEndpoints.updateProfile,
+        data: body,
+      );
+      final user = AuthUser(
+        id: response.data!['userId'] as int,
+        name: response.data!['name'] as String? ?? '',
+        email: response.data!['email'] as String? ?? '',
+        role: response.data!['role'] as String? ?? 'Customer',
+      );
+      await _cacheUser(user);
+      return user;
+    } on DioException catch (e) {
+      throw mapDioExceptionToFailure(e);
+    }
+  }
+
+  @override
   Future<void> logout() => _storage.clearAll();
 
   @override

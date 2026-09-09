@@ -39,3 +39,20 @@ class LogoutRequested extends AuthEvent {
 class CheckAuthStatus extends AuthEvent {
   const CheckAuthStatus();
 }
+
+class UpdateProfileRequested extends AuthEvent {
+  final String name;
+  final String email;
+  final String currentPassword;
+  final String? newPassword;
+
+  const UpdateProfileRequested({
+    required this.name,
+    required this.email,
+    required this.currentPassword,
+    this.newPassword,
+  });
+
+  @override
+  List<Object?> get props => [name, email, currentPassword, newPassword];
+}

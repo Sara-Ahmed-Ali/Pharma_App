@@ -11,39 +11,41 @@ class OrderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(title: const Text('Order Details')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _infoCard(),
+          _infoCard(context),
           const SizedBox(height: 16),
-          _itemsCard(),
+          _itemsCard(context),
         ],
       ),
     );
   }
 
-  Widget _infoCard() {
+  Widget _infoCard(BuildContext context) {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
-          _row('Order ID', '#${order.id}'),
+          _row(context, 'Order ID', '#${order.id}'),
           const SizedBox(height: 10),
-          _row('Status', order.status),
+          _row(context, 'Status', order.status),
           const SizedBox(height: 10),
-          _row('Payment', order.paymentMethod),
+          _row(context, 'Payment', order.paymentMethod),
           const SizedBox(height: 10),
-          _row('Date', Formatters.date(order.orderDate)),
+          _row(context, 'Date', Formatters.date(order.orderDate)),
           const SizedBox(height: 10),
-          _row('Shipping', order.shippingAddress),
+          _row(context, 'Shipping', order.shippingAddress),
           const Divider(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,7 +59,7 @@ class OrderDetailsScreen extends StatelessWidget {
               ),
               Text(
                 Formatters.currency(order.totalAmount),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
@@ -70,23 +72,24 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _itemsCard() {
+  Widget _itemsCard(BuildContext context) {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Items',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -98,9 +101,9 @@ class OrderDetailsScreen extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '${item.productName} × ${item.quantity}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -120,7 +123,8 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _row(String label, String value) {
+  Widget _row(BuildContext context, String label, String value) {
+    final colors = AppColors.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -128,19 +132,19 @@ class OrderDetailsScreen extends StatelessWidget {
           width: 90,
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
             ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
         ),

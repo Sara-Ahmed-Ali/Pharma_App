@@ -1,5 +1,6 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -18,10 +19,11 @@ import '../../../orders/presentation/screens/checkout_screen.dart';
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: const Text('My Cart'),
       ),
@@ -111,14 +113,15 @@ class _CartItemTile extends StatelessWidget {
 
   const _CartItemTile({required this.item, required this.onRemove});
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
@@ -131,20 +134,21 @@ class _CartItemTile extends StatelessWidget {
                 imageUrl: ProductImages.forProduct(
                   productId: item.productId,
                   categoryName: '',
+                  imageUrl: item.imageUrl,
                 ),
-                fit: BoxFit.cover,
+fit: BoxFit.cover,
                 placeholder: (_, _) => Container(
-                  color: const Color(0xFFF1F5F9),
-                  child: const Icon(
+                  color: colors.placeholderBackground,
+                  child: Icon(
                     Icons.medication_outlined,
-                    color: Color(0xFFCBD5E1),
+                    color: colors.placeholderIcon,
                   ),
                 ),
                 errorWidget: (_, _, _) => Container(
-                  color: const Color(0xFFF1F5F9),
-                  child: const Icon(
+                  color: colors.placeholderBackground,
+                  child: Icon(
                     Icons.medication_outlined,
-                    color: Color(0xFFCBD5E1),
+                    color: colors.placeholderIcon,
                   ),
                 ),
               ),
@@ -159,16 +163,16 @@ class _CartItemTile extends StatelessWidget {
                   item.productName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   Formatters.currency(item.unitPrice),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
@@ -190,16 +194,9 @@ class _CartItemTile extends StatelessWidget {
                             }
                           : null,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        '${item.quantity}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+const SizedBox(width: 4),
+                    _QuantityEditor(item: item),
+                    const SizedBox(width: 4),
                     _CartQtyButton(
                       icon: Icons.add_rounded,
                       onTap: () {
@@ -218,7 +215,7 @@ class _CartItemTile extends StatelessWidget {
           ),
           IconButton(
             onPressed: onRemove,
-            icon: const Icon(
+            icon: Icon(
               Icons.delete_outline_rounded,
               color: AppColors.error,
             ),
@@ -237,6 +234,7 @@ class _CartQtyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -245,17 +243,112 @@ class _CartQtyButton extends StatelessWidget {
         height: 30,
         decoration: BoxDecoration(
           color: onTap == null
-              ? const Color(0xFFF1F5F9)
-              : AppColors.primaryLight,
+              ? colors.placeholderBackground
+              : colors.primaryLight,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
           size: 16,
           color: onTap == null
-              ? const Color(0xFFCBD5E1)
+              ? colors.placeholderIcon
               : AppColors.primary,
         ),
+      ),
+    );
+  }
+}
+
+class _QuantityEditor extends StatefulWidget {
+  final CartItem item;
+
+  const _QuantityEditor({required this.item});
+
+  @override
+  State<_QuantityEditor> createState() => _QuantityEditorState();
+}
+
+class _QuantityEditorState extends State<_QuantityEditor> {
+  late final TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: '${widget.item.quantity}');
+  }
+
+  @override
+  void didUpdateWidget(covariant _QuantityEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.item.quantity != widget.item.quantity) {
+      final normalized = '${widget.item.quantity}';
+      if (!_focusNode.hasFocus && _controller.text != normalized) {
+        _controller.text = normalized;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final raw = _controller.text.trim();
+    final parsed = int.tryParse(raw);
+    if (parsed == null || parsed < 1) {
+      _controller.text = '${widget.item.quantity}';
+      return;
+    }
+    if (parsed != widget.item.quantity) {
+      context.read<CartBloc>().add(
+            CartItemQuantityUpdated(
+              productId: widget.item.productId,
+              quantity: parsed,
+            ),
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    return SizedBox(
+      width: 44,
+      child: TextField(
+        controller: _controller,
+        focusNode: _focusNode,
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        maxLength: 3,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: colors.textPrimary,
+        ),
+        decoration: InputDecoration(
+          isDense: true,
+          counterText: '',
+          contentPadding: const EdgeInsets.symmetric(vertical: 6),
+          border: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: colors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: colors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            borderSide: BorderSide(color: AppColors.primary),
+          ),
+        ),
+        onSubmitted: (_) => _submit(),
+        onEditingComplete: _submit,
       ),
     );
   }
@@ -272,13 +365,14 @@ class _CartSummaryBar extends StatelessWidget {
     required this.onCheckout,
   });
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.border)),
       ),
       child: SafeArea(
         top: false,
@@ -290,17 +384,17 @@ class _CartSummaryBar extends StatelessWidget {
               children: [
                 Text(
                   itemsCount == 1 ? '1 item' : '$itemsCount items',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 Text(
                   Formatters.currency(totalPrice),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ],
@@ -315,7 +409,7 @@ class _CartSummaryBar extends StatelessWidget {
               onPressed: () {
                 context.read<CartBloc>().add(const CartCleared());
               },
-              child: const Text(
+              child: Text(
                 'Clear Cart',
                 style: TextStyle(color: AppColors.error),
               ),

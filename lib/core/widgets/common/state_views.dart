@@ -11,6 +11,7 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -20,11 +21,11 @@ class ErrorView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFEE2E2),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.cloud_off_rounded,
                 color: AppColors.error,
                 size: 36,
@@ -44,7 +45,7 @@ class ErrorView extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: AppColors.textSecondary),
+                  ?.copyWith(color: colors.textSecondary),
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
@@ -79,6 +80,7 @@ class EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -88,8 +90,8 @@ class EmptyView extends StatelessWidget {
             Container(
               width: 72,
               height: 72,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryLight,
+              decoration: BoxDecoration(
+                color: colors.primaryLight,
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: AppColors.primary, size: 36),
@@ -108,7 +110,7 @@ class EmptyView extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: AppColors.textSecondary),
+                  ?.copyWith(color: colors.textSecondary),
             ),
             if (action != null) ...[
               const SizedBox(height: 20),
@@ -128,11 +130,12 @@ class LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 32,
             height: 32,
             child: CircularProgressIndicator(
@@ -146,7 +149,7 @@ class LoadingView extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium
-                ?.copyWith(color: AppColors.textSecondary),
+                ?.copyWith(color: colors.textSecondary),
           ),
         ],
       ),

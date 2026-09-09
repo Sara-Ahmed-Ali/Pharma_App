@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/app_navigation.dart';
 import '../../../auth/domain/entities/auth_user.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
-import '../../../orders/presentation/screens/orders_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   final AuthUser user;
@@ -14,8 +15,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: const Text('Profile'),
       ),
@@ -24,7 +26,7 @@ class ProfileScreen extends StatelessWidget {
         children: [
           _profileHeader(user),
           const SizedBox(height: 16),
-          _menuCard(context),
+          _menuCard(context, user),
           const SizedBox(height: 16),
           _logoutButton(context),
         ],
@@ -46,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
             backgroundColor: Colors.white,
             child: Text(
               user.initial,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
                 color: AppColors.primary,
@@ -99,27 +101,40 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _menuCard(BuildContext context) {
+  Widget _menuCard(BuildContext context, AuthUser user) {
+    final colors = AppColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
           _menuTile(
-            icon: Icons.receipt_long_outlined,
-            title: 'My Orders',
-            subtitle: 'Track and manage your orders',
+            context,
+            icon: Icons.edit_outlined,
+            title: 'Edit Profile',
+            subtitle: 'Update your name, email or password',
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                MaterialPageRoute(
+                  builder: (_) => EditProfileScreen(user: user),
+                ),
               );
             },
           ),
           const Divider(height: 1, indent: 56),
           _menuTile(
+            context,
+            icon: Icons.receipt_long_outlined,
+            title: 'My Orders',
+            subtitle: 'Track and manage your orders',
+            onTap: () => mainTabIndex.value = 2,
+          ),
+          const Divider(height: 1, indent: 56),
+          _menuTile(
+            context,
             icon: Icons.help_outline_rounded,
             title: 'Help & Support',
             subtitle: 'Contact our pharmacy team',
@@ -133,6 +148,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const Divider(height: 1, indent: 56),
           _menuTile(
+            context,
             icon: Icons.info_outline_rounded,
             title: 'About',
             subtitle: 'Pharma Firm, Abour',
@@ -143,37 +159,39 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _menuTile({
+  Widget _menuTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
     required VoidCallback onTap,
   }) {
+    final colors = AppColors.of(context);
     return ListTile(
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: AppColors.primaryLight,
+          color: colors.primaryLight,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: AppColors.primary, size: 20),
       ),
       title: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
+          color: colors.textPrimary,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+        style: TextStyle(fontSize: 12, color: colors.textSecondary),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.chevron_right_rounded,
-        color: AppColors.textHint,
+        color: colors.textHint,
       ),
       onTap: onTap,
     );
@@ -184,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
       onPressed: () => _confirmLogout(context),
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.error,
-        side: const BorderSide(color: AppColors.error),
+        side: BorderSide(color: AppColors.error),
         minimumSize: const Size.fromHeight(52),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

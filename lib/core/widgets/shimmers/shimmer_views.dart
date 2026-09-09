@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
 import 'shimmer_box.dart';
 
 class ProductGridShimmer extends StatelessWidget {
@@ -19,13 +20,14 @@ class ProductGridShimmer extends StatelessWidget {
         crossAxisSpacing: 12,
         childAspectRatio: 0.72,
       ),
-      itemCount: itemCount,
+itemCount: itemCount,
       itemBuilder: (context, index) {
+        final colors = AppColors.of(context);
         return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
+decoration: BoxDecoration(
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: colors.border),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -89,15 +91,16 @@ class CartListShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: 4,
+itemCount: 4,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
+        final colors = AppColors.of(context);
         return Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
+decoration: BoxDecoration(
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
+            border: Border.all(color: colors.border),
           ),
           child: const Row(
             children: [

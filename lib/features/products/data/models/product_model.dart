@@ -9,6 +9,7 @@ class ProductModel {
   final int categoryId;
   final String categoryName;
   final bool isActive;
+  final String? imageUrl;
 
   const ProductModel({
     required this.id,
@@ -19,6 +20,7 @@ class ProductModel {
     required this.categoryId,
     required this.categoryName,
     required this.isActive,
+    this.imageUrl,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class ProductModel {
       categoryId: (json['categoryId'] as num?)?.toInt() ?? 0,
       categoryName: json['categoryName'] as String? ?? '',
       isActive: json['isActive'] as bool? ?? true,
+      imageUrl: json['imageUrl'] as String?,
     );
   }
 
@@ -43,5 +46,6 @@ class ProductModel {
         categoryId: categoryId,
         categoryName: categoryName,
         isActive: isActive,
+        imageUrl: imageUrl,
       );
 }

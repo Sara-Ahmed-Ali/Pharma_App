@@ -7,6 +7,7 @@ class Product {
   final int categoryId;
   final String categoryName;
   final bool isActive;
+  final String? imageUrl;
 
   const Product({
     required this.id,
@@ -17,9 +18,22 @@ class Product {
     required this.categoryId,
     required this.categoryName,
     required this.isActive,
+    this.imageUrl,
   });
 
   bool get inStock => stockQuantity > 0 && isActive;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'description': description,
+        'price': price,
+        'stockQuantity': stockQuantity,
+        'categoryId': categoryId,
+        'categoryName': categoryName,
+        'isActive': isActive,
+        'imageUrl': imageUrl,
+      };
 
   Product copyWith({
     int? id,
@@ -30,6 +44,7 @@ class Product {
     int? categoryId,
     String? categoryName,
     bool? isActive,
+    String? imageUrl,
   }) {
     return Product(
       id: id ?? this.id,
@@ -40,6 +55,7 @@ class Product {
       categoryId: categoryId ?? this.categoryId,
       categoryName: categoryName ?? this.categoryName,
       isActive: isActive ?? this.isActive,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }

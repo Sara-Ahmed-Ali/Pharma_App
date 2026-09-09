@@ -3,6 +3,7 @@ class ApiEndpoints {
   static const String login = '/Auth/login';
   static const String refreshToken = '/Auth/refresh-token';
   static const String me = '/Auth/me';
+  static const String updateProfile = '/Auth/update-profile';
   static const String users = '/Auth/users';
 
   static const String products = '/Products';

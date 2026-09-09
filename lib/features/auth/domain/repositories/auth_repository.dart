@@ -14,6 +14,13 @@ abstract class AuthRepository {
 
   Future<AuthUser> getCurrentUser();
 
+  Future<AuthUser> updateProfile({
+    required String name,
+    required String email,
+    required String currentPassword,
+    String? newPassword,
+  });
+
   Future<void> logout();
 
   Future<AuthUser?> getCachedUser();

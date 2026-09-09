@@ -109,6 +109,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return BlocListener<PaymentBloc, PaymentState>(
       listener: (context, state) {
         if (state is PaymentReady && !_presentingSheet) {
@@ -122,7 +123,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: colors.background,
         appBar: AppBar(title: const Text('Checkout')),
         body: BlocConsumer<OrderBloc, OrderState>(
           listener: (context, state) {
@@ -161,12 +162,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     onPressed: isSubmitting ? null : _submitOrder,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'By placing this order you agree to our terms & conditions.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textHint,
+                      color: colors.textHint,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -180,22 +181,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildReviewSection() {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Order Review',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -209,9 +211,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       '${item.productName} × ${item.quantity}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -239,7 +241,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
               Text(
                 Formatters.currency(widget.cart.totalPrice),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
@@ -253,22 +255,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildPaymentSection() {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Payment Method',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -293,28 +296,29 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildAddressSection() {
+    final colors = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE8EDF2)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Shipping Address',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 2),
-          const Text(
+          Text(
             'Enter your full address in detail',
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 12, color: colors.textSecondary),
           ),
           const SizedBox(height: 12),
           AppTextField(
@@ -325,7 +329,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             validator: (value) =>
                 Validators.plainText(value, fieldName: 'Governorate'),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 12), 
           AppTextField(
             controller: _cityController,
             label: 'City / District',
@@ -382,22 +386,23 @@ class _PaymentOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: selected ? AppColors.primaryLight : const Color(0xFFF8FAFC),
+          color: selected ? colors.primaryLight : colors.background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected ? AppColors.primary : const Color(0xFFE2E8F0),
+            color: selected ? AppColors.primary : colors.border,
           ),
         ),
         child: Row(
           children: [
             Icon(icon,
-                color: selected ? AppColors.primary : AppColors.textSecondary),
+                color: selected ? AppColors.primary : colors.textSecondary),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -409,16 +414,16 @@ class _PaymentOption extends StatelessWidget {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: selected
-                          ? AppColors.primaryDark
-                          : AppColors.textPrimary,
+                          ? colors.onPrimaryLight
+                          : colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -428,7 +433,7 @@ class _PaymentOption extends StatelessWidget {
               selected
                   ? Icons.radio_button_checked
                   : Icons.radio_button_off,
-              color: selected ? AppColors.primary : const Color(0xFFCBD5E1),
+              color: selected ? AppColors.primary : colors.placeholderIcon,
             ),
           ],
         ),

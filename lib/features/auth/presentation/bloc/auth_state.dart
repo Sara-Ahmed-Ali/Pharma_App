@@ -26,6 +26,15 @@ class AuthUnauthenticated extends AuthState {}
 
 class RegistrationSucceeded extends AuthState {}
 
+class ProfileUpdated extends AuthState {
+  final AuthUser user;
+
+  const ProfileUpdated(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
+
 class AuthError extends AuthState {
   final String message;
 

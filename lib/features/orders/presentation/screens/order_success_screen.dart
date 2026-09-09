@@ -14,8 +14,9 @@ class OrderSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -30,13 +31,13 @@ class OrderSuccessScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(0),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
+                  color: colors.primaryLight,
                   shape: BoxShape.circle,
                 ),
                 child: Container(
                   width: 84,
                   height: 84,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
@@ -48,13 +49,13 @@ class OrderSuccessScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              const Text(
+              Text(
                 'Order Placed Successfully!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -63,33 +64,33 @@ class OrderSuccessScreen extends StatelessWidget {
                     ? 'Payment confirmed. We will deliver your order soon.'
                     : 'Your order has been received. We will contact you for confirmation.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   height: 1.5,
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                 ),
               ),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: colors.background,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Order #',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       '$orderId',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary,

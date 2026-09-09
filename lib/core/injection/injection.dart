@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import '../network/api_client.dart';
 import '../services/secure_storage_service.dart';
 import '../../features/products/data/repositories/product_repository.dart';
+import '../../features/products/data/repositories/favorites_repository.dart';
 import '../../features/products/domain/repositories/product_repository.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
@@ -28,6 +29,9 @@ void setupLocator() {
     )
     ..registerLazySingleton<ProductRepository>(
       () => ProductRepositoryImpl(ApiClient.instance.dio),
+    )
+    ..registerLazySingleton<FavoritesRepository>(
+      () => FavoritesRepository(SecureStorageService.instance),
     )
     ..registerLazySingleton<CartRepository>(
       () => CartRepositoryImpl(ApiClient.instance.dio),

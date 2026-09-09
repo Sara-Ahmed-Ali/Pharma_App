@@ -78,6 +78,7 @@ class CartRepositoryImpl implements CartRepository {
       cartItemId: (json['cartItemId'] as num?)?.toInt() ?? 0,
       productId: (json['productId'] as num?)?.toInt() ?? 0,
       productName: json['productName'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String?,
       unitPrice: unitPrice,
       quantity: quantity,
       subTotal: (json['subTotal'] as num?)?.toDouble() ?? (unitPrice * quantity),

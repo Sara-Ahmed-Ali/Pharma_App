@@ -61,7 +61,7 @@ Failure mapDioExceptionToFailure(Object error) {
               message ?? 'Invalid request. Please check your data.',
             );
           case 401:
-            return const Failure('Session expired. Please log in again.');
+            return const Failure('Invalid request. Please log in again.');
           case 404:
             return Failure(message ?? 'Requested resource was not found.');
           case 429:

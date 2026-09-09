@@ -71,13 +71,13 @@ class AppOutlinedButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          side: const BorderSide(color: AppColors.primary),
+          side: BorderSide(color: AppColors.primary),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
@@ -87,27 +87,6 @@ class AppOutlinedButton extends StatelessWidget {
               )
             : Text(label),
       ),
-    );
-  }
-}
-
-class AppIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final Color? color;
-
-  const AppIconButton({
-    super.key,
-    required this.icon,
-    this.onPressed,
-    this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onPressed,
-      icon: Icon(icon, color: color ?? AppColors.primary),
     );
   }
 }

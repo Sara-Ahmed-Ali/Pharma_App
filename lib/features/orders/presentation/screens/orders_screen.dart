@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -15,10 +15,11 @@ import 'order_details_screen.dart';
 class OrdersScreen extends StatelessWidget {
   const OrdersScreen({super.key});
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppBar(
         title: const Text('My Orders'),
         actions: [
@@ -105,7 +106,7 @@ class _OrderCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onCancel;
 
-  const _OrderCard({
+const _OrderCard({
     required this.order,
     required this.onTap,
     this.onCancel,
@@ -113,15 +114,16 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
+decoration: BoxDecoration(
+          color: colors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFE8EDF2)),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,10 +133,10 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Text(
                   'Order #${order.id}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 _StatusBadge(status: order.status),
@@ -143,17 +145,17 @@ class _OrderCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               '${order.items.length} item(s) · ${order.paymentMethod}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               Formatters.date(order.orderDate),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textHint,
+                color: colors.textHint,
               ),
             ),
             const Divider(height: 20),
@@ -164,12 +166,12 @@ class _OrderCard extends StatelessWidget {
                   'Total',
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 Text(
                   Formatters.currency(order.totalAmount),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primary,
@@ -185,7 +187,7 @@ class _OrderCard extends StatelessWidget {
                   onPressed: onCancel,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.error,
-                    side: const BorderSide(color: AppColors.error),
+                    side: BorderSide(color: AppColors.error),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -206,8 +208,9 @@ class _StatusBadge extends StatelessWidget {
 
   const _StatusBadge({required this.status});
 
-  @override
+@override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     final normalized = status.toLowerCase();
     final Color color;
     switch (normalized) {
@@ -225,7 +228,7 @@ class _StatusBadge extends StatelessWidget {
         color = AppColors.error;
         break;
       default:
-        color = AppColors.textSecondary;
+        color = colors.textSecondary;
     }
 
     return Container(

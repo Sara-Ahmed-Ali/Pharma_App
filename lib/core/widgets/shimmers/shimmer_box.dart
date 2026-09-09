@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../theme/app_colors.dart';
+
 /// A shimmer skeleton used for loading states.
 class ShimmerBox extends StatefulWidget {
   final double? width;
@@ -43,6 +45,7 @@ class _ShimmerBoxState extends State<ShimmerBox>
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
@@ -52,10 +55,10 @@ class _ShimmerBoxState extends State<ShimmerBox>
             final gradient = LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              colors: const [
-                Color(0xFFE8EDF2),
-                Color(0xFFF5F7FA),
-                Color(0xFFE8EDF2),
+              colors: [
+                colors.border,
+                colors.surface,
+                colors.border,
               ],
               stops: const [0.1, 0.5, 0.9],
               transform: _SlideGradientTransform(_animation.value),
@@ -66,7 +69,7 @@ class _ShimmerBoxState extends State<ShimmerBox>
             width: widget.width,
             height: widget.height,
             decoration: BoxDecoration(
-              color: const Color(0xFFE8EDF2),
+              color: colors.border,
               borderRadius: BorderRadius.circular(widget.radius),
             ),
           ),

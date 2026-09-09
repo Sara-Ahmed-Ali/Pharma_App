@@ -40,6 +40,26 @@ class SecureStorageService {
   Future<String?> getUser() =>
       _storage.read(key: AppConstants.storageKeyUser);
 
+  Future<String?> getFavorites() =>
+      _storage.read(key: AppConstants.storageKeyFavorites);
+
+  Future<void> saveFavorites(String favoritesJson) async {
+    await _storage.write(
+      key: AppConstants.storageKeyFavorites,
+      value: favoritesJson,
+    );
+  }
+
+  Future<String?> getThemeMode() =>
+      _storage.read(key: AppConstants.storageKeyThemeMode);
+
+  Future<void> saveThemeMode(String mode) async {
+    await _storage.write(
+      key: AppConstants.storageKeyThemeMode,
+      value: mode,
+    );
+  }
+
   Future<void> clearAll() async {
     await _storage.delete(key: AppConstants.storageKeyAccessToken);
     await _storage.delete(key: AppConstants.storageKeyRefreshToken);

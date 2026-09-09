@@ -2,32 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
+import 'pharma_palette.dart';
 
 class AppTheme {
-  static ThemeData get light {
+  static ThemeData get light => _build(Brightness.light);
+  static ThemeData get dark => _build(Brightness.dark);
+
+  static ThemeData _build(Brightness brightness) {
+    final palette = brightness == Brightness.dark
+        ? PharmaPalette.dark
+        : PharmaPalette.light;
     final base = ThemeData(
       useMaterial3: true,
+      brightness: brightness,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
+        brightness: brightness,
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        surface: AppColors.surface,
+        surface: palette.surface,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: palette.background,
+      extensions: [palette],
     );
 
     return base.copyWith(
       textTheme: GoogleFonts.poppinsTextTheme(base.textTheme).apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
+        bodyColor: palette.textPrimary,
+        displayColor: palette.textPrimary,
       ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.textPrimary,
+      appBarTheme: AppBarTheme(
+        backgroundColor: palette.surface,
+        foregroundColor: palette.textPrimary,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
-          color: AppColors.textPrimary,
+          color: palette.textPrimary,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
@@ -48,26 +58,26 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: palette.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
-        hintStyle: const TextStyle(color: AppColors.textHint),
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
-        prefixIconColor: AppColors.textSecondary,
-        suffixIconColor: AppColors.textSecondary,
+        hintStyle: TextStyle(color: palette.textHint),
+        labelStyle: TextStyle(color: palette.textSecondary),
+        prefixIconColor: palette.textSecondary,
+        suffixIconColor: palette.textSecondary,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          borderSide: BorderSide(color: palette.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          borderSide: BorderSide(color: palette.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -78,8 +88,8 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.error, width: 1.5),
         ),
       ),
-      cardTheme: const CardThemeData(
-        color: Colors.white,
+      cardTheme: CardThemeData(
+        color: palette.surface,
         elevation: 1,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
@@ -87,27 +97,33 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: palette.surface,
         selectedColor: AppColors.primary,
-        labelStyle: const TextStyle(color: AppColors.textPrimary),
+        labelStyle: TextStyle(color: palette.textPrimary),
         secondaryLabelStyle: const TextStyle(color: Colors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFFE2E8F0)),
+          side: BorderSide(color: palette.border),
         ),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: palette.surface,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: palette.textHint,
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.textPrimary,
+        backgroundColor: const Color(0xFF1E293B),
         contentTextStyle: const TextStyle(color: Colors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      dividerTheme: const DividerThemeData(
-        color: Color(0xFFE2E8F0),
+      dividerTheme: DividerThemeData(
+        color: palette.border,
         thickness: 1,
       ),
+      scaffoldBackgroundColor: palette.background,
     );
   }
 }

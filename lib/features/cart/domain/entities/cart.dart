@@ -2,6 +2,7 @@ class CartItem {
   final int cartItemId;
   final int productId;
   final String productName;
+  final String? imageUrl;
   final double unitPrice;
   final int quantity;
   final double subTotal;
@@ -11,6 +12,7 @@ class CartItem {
     required this.cartItemId,
     required this.productId,
     required this.productName,
+    this.imageUrl,
     required this.unitPrice,
     required this.quantity,
     required this.subTotal,
@@ -22,6 +24,7 @@ class CartItem {
       cartItemId: cartItemId,
       productId: productId,
       productName: productName,
+      imageUrl: imageUrl,
       unitPrice: unitPrice,
       quantity: quantity ?? this.quantity,
       subTotal: (quantity ?? this.quantity) * unitPrice,

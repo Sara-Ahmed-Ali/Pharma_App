@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/app_navigation.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
@@ -27,13 +26,30 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     mainTabIndex.value = 0;
+    mainTabIndex.addListener(_onTabChanged);
     context.read<CartBloc>().add(const CartFetchRequested());
+  }
+
+  @override
+  void dispose() {
+    mainTabIndex.removeListener(_onTabChanged);
+    super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (mainTabIndex.value == 2) {
+      context.read<OrderBloc>().add(const OrdersFetchRequested());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
-    final user = authState is AuthAuthenticated ? authState.user : null;
+    final user = authState is AuthAuthenticated
+        ? authState.user
+        : authState is ProfileUpdated
+            ? authState.user
+            : null;
 
     final screens = [
       const HomeScreen(),
@@ -59,15 +75,9 @@ class _MainShellState extends State<MainShell> {
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: safeIndex,
         onTap: (tappedIndex) {
-            if (tappedIndex == 2) {
-              context.read<OrderBloc>().add(const OrdersFetchRequested());
-            }
             setState(() => mainTabIndex.value = tappedIndex);
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textHint,
           selectedFontSize: 12,
           unselectedFontSize: 12,
           items: [
